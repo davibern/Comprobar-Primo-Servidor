@@ -13,7 +13,7 @@ import java.util.Scanner;
 /**
  *
  * @author Davibern
- * @version 1.0
+ * @version 1.1
  */
 public class Cliente {
     
@@ -21,6 +21,7 @@ public class Cliente {
     private final int PUERTO = 16061;
     private final String SERVIDOR = "localhost";
     private Long numero;
+    private String numeros;
     
     /**
      * Constructor del cliente que se conectará al servidor.
@@ -52,10 +53,10 @@ public class Cliente {
     
     /**
      * Constructor sobrecargado que recibe un número por argumento para comprobar
-     * @param numero número pasado como argumento de ejecución del programa
+     * @param numeros números pasados como argumentos de ejecución del programa
      */
-    public Cliente(Long numero){
-        this.numero = numero;
+    public Cliente(String numeros){
+        this.numeros = numeros;
         
         try {
             Socket cliente = new Socket(this.SERVIDOR, this.PUERTO);
@@ -65,7 +66,7 @@ public class Cliente {
             DataOutputStream outputData = new DataOutputStream(output);
             System.out.println(dataInput.readUTF());
 
-            outputData.writeUTF(this.numero.toString());
+            outputData.writeUTF(this.numeros);
             System.out.println(dataInput.readUTF());
             cliente.close();
         } catch (IOException ex) {
@@ -79,6 +80,8 @@ public class Cliente {
      */
     public static void main(String[] args) {
         
+        StringBuilder cadena = new StringBuilder();
+        
         // Comprobar si el cliente recibe como argumentos un número
         if (args.length == 0) {
             // Ejecutar el cliente usando el número que recibe como parámetro
@@ -86,8 +89,11 @@ public class Cliente {
         } else {
             // Ejecutar el cliente usando el número pasado como argumento
             try {
-                Long numero = Long.parseLong(args[0]);
-                Cliente cliente = new Cliente(numero);
+                // Se almacena en una cadena los números a analizar
+                for (String arg : args) {
+                    cadena.append(arg).append(" ");
+                }
+                Cliente cliente = new Cliente(cadena.toString());
             } catch (NumberFormatException e) {
                 System.err.println("Error -> No ha ingresado un número válido.");
             }

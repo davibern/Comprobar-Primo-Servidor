@@ -8,11 +8,13 @@ import java.io.InputStream;
 import java.io.OutputStream;
 import java.net.ServerSocket;
 import java.net.Socket;
+import java.util.LinkedList;
+import java.util.List;
 
 /**
  *
  * @author Davibern
- * @version 1.0
+ * @version 1.2
  */
 public class Servidor {
     
@@ -20,19 +22,22 @@ public class Servidor {
     private final int PUERTO = 16061;
     private long divisor = 0;
     private long numero;
+    private List<Long> numeros = new LinkedList<>();
     
     /**
      * Constructor del servidor. Iniciará el servidor
      */
     public Servidor() {
         
-        String resultado = null;
-               
+        StringBuilder resultado = new StringBuilder();
+                       
         try {
             
+            // Levantar servidor
             ServerSocket servidor = new ServerSocket(this.PUERTO);
             System.out.println(this.menuServidor());
-            
+                       
+            // Mientras haya conexión...
             while (true) {
                 Socket cliente = servidor.accept();
                 OutputStream output = cliente.getOutputStream();
@@ -43,21 +48,35 @@ public class Servidor {
                 System.out.println("CLIENTE CONECTADO.");
                 System.out.println("\n##########################################");
                 String cadena = inputData.readUTF();
-                this.numero = Long.parseLong(cadena);
-                System.out.println("\nCOMPROBAR NÚMERO: " + cadena);
-                System.out.println("\n##########################################\n");
-                if (this.esPrimo()) {
-                    resultado = ("RESULTADO: " + this.numero + " es primo.");
-                } else {
-                    resultado = ("RESULTADO: " + this.numero + " no es primo.");
-                }
-                outputData.writeUTF(resultado);
-                System.out.println(resultado);
                 
+                // Se pasan los argumentos a una lista de números
+                for (String separarCadena : cadena.split(" ")) {
+                    this.numeros.add(Long.parseLong(separarCadena.trim()));
+                }
+                
+                // Se muestran los números por pantalla
+                System.out.println("Los números a comprobar son: " + cadena);
+                
+                // Se comprueba cada número almacenado en la lista
+                for (int i = 0; i < this.numeros.size() - 1; i++) {
+                    
+                    this.numero = this.numeros.get(i);
+                   
+                    if (this.esPrimo()) {
+                        resultado.append(this.numeros.get(i).toString()).append(" ");
+                    }
+                                       
+                }
+                
+                // Salidas y cierre del programa
+                outputData.writeUTF("Los números primos son: " + resultado.toString());
+                System.out.println("Los números primos son: " + resultado.toString());
+                System.out.println("Terminada la ejecución.");
                 inputData.close();
                 outputData.close();
                 servidor.close();
                 cliente.close();
+                
             }
             
         } catch (IOException ex) {
