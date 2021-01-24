@@ -27,35 +27,42 @@ public class Servidor {
     public Servidor() {
         
         String resultado = null;
-        
+               
         try {
+            
             ServerSocket servidor = new ServerSocket(this.PUERTO);
             System.out.println(this.menuServidor());
-            Socket cliente = servidor.accept();
-            OutputStream output = cliente.getOutputStream();
-            DataOutputStream dataOutput = new DataOutputStream(output);
-            InputStream input = cliente.getInputStream();
-            DataInputStream inputData = new DataInputStream(input);
-            dataOutput.writeUTF(this.menuServidor());
-            System.out.println("CLIENTE CONECTADO.");
-            System.out.println("\n##########################################");
-            String cadena = inputData.readUTF();
-            this.numero = Long.parseLong(cadena);
-            System.out.println("\nCOMPROBAR NÚMERO: " + cadena);
-            System.out.println("\n##########################################\n");
-            if (this.esPrimo()) {
-                resultado = ("RESULTADO: " + this.numero + " es primo.");
-            } else {
-                resultado = ("RESULTADO: " + this.numero + " no es primo.");
+            
+            while (true) {
+                Socket cliente = servidor.accept();
+                OutputStream output = cliente.getOutputStream();
+                DataOutputStream outputData = new DataOutputStream(output);
+                InputStream input = cliente.getInputStream();
+                DataInputStream inputData = new DataInputStream(input);
+                outputData.writeUTF(this.menuServidor());
+                System.out.println("CLIENTE CONECTADO.");
+                System.out.println("\n##########################################");
+                String cadena = inputData.readUTF();
+                this.numero = Long.parseLong(cadena);
+                System.out.println("\nCOMPROBAR NÚMERO: " + cadena);
+                System.out.println("\n##########################################\n");
+                if (this.esPrimo()) {
+                    resultado = ("RESULTADO: " + this.numero + " es primo.");
+                } else {
+                    resultado = ("RESULTADO: " + this.numero + " no es primo.");
+                }
+                outputData.writeUTF(resultado);
+                System.out.println(resultado);
+                
+                inputData.close();
+                outputData.close();
+                servidor.close();
+                cliente.close();
             }
-            dataOutput.writeUTF(resultado);
-            System.out.println(resultado);
-            servidor.close();
-            cliente.close();
-            System.out.println("\n##########################################\n");
-            System.out.println("Conexión con el cliente cerrada correctamente.");
-            System.out.println("\n##########################################\n");
+            
         } catch (IOException ex) {
+            System.err.println(ex.getMessage());
+        } catch (NumberFormatException ex) {
             System.err.println(ex.getMessage());
         }
         
