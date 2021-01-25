@@ -17,5 +17,12 @@ El puerto de servicio del "test de primalidad" será el 16061.
 Implementar un cliente TCP que reciba como parámetro un número entero positivo (desde la línea de órdenes), pregunte al servidor anterior si ese número es
 primo o no y muestre el resultado por pantalla.
 
+## Parte 3:
+
+Modificar el servidor de la ampliación 1 para que el test de primalidad se lleve a cabo de manera concurrente usando el modelo de hilo ComprobadorPrimos que se
+proporcionó en el primer ejercicio.
+
+Digamos que aunque el servicio sigue siendo “monohilo” (sólo se atiende a un cliente en un momento dado), el test de primalidad sí es “multihilo”.
+
 # JDK
 Java 11
