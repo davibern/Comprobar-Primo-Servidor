@@ -16,7 +16,7 @@ import java.util.List;
  * @author Davibern
  * @version 1.2
  */
-public class Servidor {
+public class Servidor extends Thread {
     
     // Atributos o Constantes
     private final int PUERTO = 16061;
@@ -123,6 +123,11 @@ public class Servidor {
                 candidatoDivisor++;                       
         }        
         return primo;
+    }
+    
+    @Override
+    public void run() {
+        new Servidor();
     }
     
     /**
