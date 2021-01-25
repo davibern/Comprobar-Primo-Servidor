@@ -14,21 +14,23 @@ import java.util.List;
 /**
  *
  * @author Davibern
- * @version 1.2
+ * @version 1.3
  */
-public class Servidor extends Thread {
+public class Servidor {
     
     // Atributos o Constantes
     private final int PUERTO = 16061;
     private long divisor = 0;
     private long numero;
     private List<Long> numeros = new LinkedList<>();
+    public static List<Long> listaNumeros = new LinkedList<>();
     
     /**
      * Constructor del servidor. Iniciará el servidor
      */
     public Servidor() {
         
+        List<Thread> hilos = new LinkedList<>();
         StringBuilder resultado = new StringBuilder();
                        
         try {
@@ -55,22 +57,31 @@ public class Servidor extends Thread {
                 }
                 
                 // Se muestran los números por pantalla
-                System.out.println("Los números a comprobar son: " + cadena);
+                System.out.println("Los números a comprobar son: " + this.numeros);
                 
-                // Se comprueba cada número almacenado en la lista
-                for (int i = 0; i < this.numeros.size() - 1; i++) {
-                    
-                    this.numero = this.numeros.get(i);
-                   
-                    if (this.esPrimo()) {
-                        resultado.append(this.numeros.get(i).toString()).append(" ");
+                // Se crean tantos hilos como números haya que comprobar
+                for (Long numero : numeros) {
+                    ComprobadorPrimo comprobarNumero = new ComprobadorPrimo(numero);
+                    hilos.add(comprobarNumero);
+                }
+                
+                // Se ejecutan los hilos
+                for (Thread hilo : hilos) {
+                    hilo.start();
+                }
+                
+                // Cuando finalice la ejecución del hilo se sumará al contador de hilos finalizados
+                for (Thread hilo : hilos) {
+                    try {
+                        hilo.join();
+                    } catch (InterruptedException e) {
+                        System.err.println(e.getMessage());
                     }
-                                       
                 }
                 
                 // Salidas y cierre del programa
-                outputData.writeUTF("Los números primos son: " + resultado.toString());
-                System.out.println("Los números primos son: " + resultado.toString());
+                outputData.writeUTF("Los números primos son: " + listaNumeros);
+                System.out.println("Los números primos son: " + listaNumeros);
                 System.out.println("Terminada la ejecución.");
                 inputData.close();
                 outputData.close();
@@ -103,33 +114,13 @@ public class Servidor extends Thread {
     }
     
     /**
-     * Método que comprueba si un número es tipo primo
-     * @param numero El número a comprobar
-     * @return Verdadero o Falso si el número es o no primo
-    */
-    boolean esPrimo() {
-        boolean primo = true;
-        long candidatoDivisor = 2;
-        while (candidatoDivisor < this.numero && primo) {
-            try {
-                Thread.sleep (0, 2);
-            } catch (InterruptedException ex) {
-                System.out.printf ("Error en sleep: %s.\n", ex.getMessage());
-            }
-            if (this.numero % candidatoDivisor == 0) {
-                primo = false;
-                this.divisor = candidatoDivisor;
-            } else
-                candidatoDivisor++;                       
-        }        
-        return primo;
+     * Guardar el número primo en la lista para devolverlo al cliente
+     * @param numero 
+     */
+    public synchronized static void guardarNumero(Long numero) {
+        listaNumeros.add(numero);
     }
-    
-    @Override
-    public void run() {
-        new Servidor();
-    }
-    
+        
     /**
      * Método que levanta el servidor
      * @param args El número a analizar si se cumplimenta como argumento
