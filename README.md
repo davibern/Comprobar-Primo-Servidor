@@ -24,5 +24,9 @@ proporcionó en el primer ejercicio.
 
 Digamos que aunque el servicio sigue siendo “monohilo” (sólo se atiende a un cliente en un momento dado), el test de primalidad sí es “multihilo”.
 
+## Parte 4:
+
+En esta versión los números no los separa el cliente, sino el servidor.
+
 # JDK
 Java 11
