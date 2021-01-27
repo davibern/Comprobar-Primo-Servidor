@@ -12,7 +12,8 @@ import java.util.LinkedList;
 import java.util.List;
 
 /**
- *
+ * Sevidor que comprueba los números que recibe del cliente e indica cuáles son primos
+ * 
  * @author Davibern
  * @version 1.3
  */
@@ -51,18 +52,18 @@ public class Servidor {
                 System.out.println("\n##########################################");
                 String cadena = inputData.readUTF();
                 
-                // Se pasan los argumentos a una lista de números
-                for (String separarCadena : cadena.split(" ")) {
-                    this.numeros.add(Long.parseLong(separarCadena.trim()));
+                while (!cadena.endsWith("F")) {
+                    System.out.println("Número para analizar: " + cadena);
+                    this.numeros.add(Long.parseLong(cadena));
+                    cadena = inputData.readUTF();
+                    outputData.flush();
                 }
                 
-                // Se muestran los números por pantalla
-                System.out.println("Los números a comprobar son: " + this.numeros);
-                
+                System.out.println("Añadido todos los números: " + this.numeros);
                 // Se crean tantos hilos como números haya que comprobar
-                for (Long numero : numeros) {
-                    ComprobadorPrimo comprobarNumero = new ComprobadorPrimo(numero);
-                    hilos.add(comprobarNumero);
+                for (Long numero : this.numeros) {
+                   ComprobadorPrimo comprobarNumero = new ComprobadorPrimo(numero);
+                   hilos.add(comprobarNumero);
                 }
                 
                 // Se ejecutan los hilos

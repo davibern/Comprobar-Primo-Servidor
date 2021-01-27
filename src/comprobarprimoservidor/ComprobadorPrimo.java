@@ -4,7 +4,7 @@ package comprobarprimoservidor;
  * Clase realizada por el profesor que comprueba si un número es primo.
  * 
  * @author profesor
- * @version 1.0
+ * @version 1.1
  */
 public class ComprobadorPrimo extends Thread {
     
@@ -27,9 +27,7 @@ public class ComprobadorPrimo extends Thread {
     @Override
     public void run() {
         if (esPrimo(this.numero)) {
-            //System.out.printf ("%10d es primo.\n", this.numero);
             Servidor.guardarNumero(this.numero);
-            //System.out.println(Servidor.listaNumeros);
         }      
     }
     

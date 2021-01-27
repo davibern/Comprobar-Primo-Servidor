@@ -7,7 +7,10 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.net.Socket;
+import java.util.Arrays;
 import java.util.InputMismatchException;
+import java.util.LinkedList;
+import java.util.List;
 import java.util.Scanner;
 
 /**
@@ -22,6 +25,7 @@ public class Cliente {
     private final String SERVIDOR = "localhost";
     private Long numero;
     private String numeros;
+    private List<String> listaNumeros = new LinkedList<>();
     
     /**
      * Constructor del cliente que se conectará al servidor.
@@ -64,14 +68,30 @@ public class Cliente {
             DataInputStream dataInput = new DataInputStream(input);
             OutputStream output = cliente.getOutputStream();
             DataOutputStream outputData = new DataOutputStream(output);
+            
             System.out.println(dataInput.readUTF());
-
-            outputData.writeUTF(this.numeros);
+            this.pasarCadenaNumerosALista();
+            
+            outputData.writeUTF("" + this.listaNumeros.size());
+            //outputData.flush();
+            for (int i = 0; i < this.listaNumeros.size(); i++) {
+                outputData.writeUTF(this.listaNumeros.get(i));
+            }
+            
+            System.out.println("Los números a comprobar son: " + this.listaNumeros);
+            //outputData.writeUTF(this.numeros);
             System.out.println(dataInput.readUTF());
             cliente.close();
         } catch (IOException ex) {
             System.err.println(ex.getMessage());
         }
+    }
+    
+    /**
+     * Método que pasa los argumentos de números a una lista para pasarla al servidor
+     */
+    private void pasarCadenaNumerosALista() {
+        this.listaNumeros.addAll(Arrays.asList(this.numeros.split(" ")));
     }
     
     /**
